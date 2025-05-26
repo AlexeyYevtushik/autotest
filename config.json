@@ -1,5 +1,5 @@
 {
-    "Headless": "False",
+    "Headless": "True",
     "SlowMo": "0",
     "DefaultNavigationTimeout": "120000",
     "DefaultTimeout": "60000",

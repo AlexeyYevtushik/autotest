@@ -14,11 +14,20 @@ def setup(request):
     # Browser options
     headless = eval(configuration["Headless"])  # convert to bool
     slow_mo = float(configuration["SlowMo"])
-    launch_options = {"headless": headless, "slow_mo": slow_mo}
+    launch_options = {
+        "headless": headless,
+        "slow_mo": slow_mo,
+        "args": [
+            '--start-maximized',
+            '--disable-dev-shm-usage',  # Helps with memory issues in Docker/CI
+            '--no-sandbox',  # Required for running Chrome in containers
+            '--disable-gpu',  # Optional: helps with headless mode in some environments
+        ]
+    }
 
     # Start Playwright
     playwright = sync_playwright().start()
-    browser = playwright.chromium.launch(**launch_options, args=['--start-maximized'])
+    browser = playwright.chromium.launch(**launch_options)
 
     context_options = {'base_url': base_url}
 
@@ -53,9 +62,9 @@ def pytest_runtest_makereport(item):
     if report.when == 'call' or report.when == "setup":
         xfail = hasattr(report, 'wasxfail')
 
-        if report.failed or xfail and "page" in item.funcargs:
-            page = item.funcargs["setup"]
-
+        # Try to get the page from the test class instance
+        page = getattr(item.instance, "page", None)
+        if (report.failed or xfail) and page is not None:
             screenshot_bytes = page.screenshot()
             extra.append(pytest_html.extras.image(base64.b64encode(screenshot_bytes).decode(), ''))
 
