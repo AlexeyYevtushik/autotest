@@ -3,6 +3,7 @@ import base64
 
 from utils.read_config import AppConfiguration
 from playwright.sync_api import sync_playwright
+from pages.menu_page import MenuPage
 
 @pytest.fixture(scope="session",autouse=True)
 def browser_resources():
@@ -61,42 +62,6 @@ def browser_page(browser_resources):
         # This fixture is used to ensure the page is always initialized before tests run
 
 
-
-# @pytest.fixture(scope="session")
-# def logged_page(browser_resources):
-#     page, _, _ = browser_resources
-#     base_url = AppConfiguration.get_common_info()["Url"]
-#     if not (page.url.endswith('inventory.html') and page.locator('.inventory_list').is_visible()):
-#         page.goto(base_url)
-#         page.wait_for_selector('input[data-test="username"]:not([disabled])', state='visible')
-#         from pages.login_page import LoginPage
-#         login_page = LoginPage(page)
-#         login_page.login('standard_user', 'secret_sauce')
-#         page.wait_for_selector('.inventory_list', state='visible')
-#     if not page.url.endswith('inventory.html'):
-#         page.goto(base_url + 'inventory.html')
-#         page.wait_for_selector('.inventory_list', state='visible')
-#     yield page
-
-
-# @pytest.fixture(scope="function")
-# def back_to_home_screen(browser_resources):
-#     page, _, _ = browser_resources
-#     yield page
-#     if not (page.url.endswith('inventory.html') and page.locator('.inventory_list').is_visible()):
-#         page.goto(base_url)
-#         page.wait_for_selector('input[data-test="username"]:not([disabled])', state='visible')
-#         from pages.login_page import LoginPage
-#         login_page = LoginPage(page)
-#         login_page.login('standard_user', 'secret_sauce')
-#         page.wait_for_selector('.inventory_list', state='visible')
-#     if not page.url.endswith('inventory.html'):
-#         base_url = AppConfiguration.get_common_info()["Url"]
-#         print(base_url + 'inventory.html')
-#         page.goto(base_url + 'inventory.html')
-#         page.wait_for_selector('.inventory_list', state='visible')
-
-
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
     """
@@ -120,3 +85,32 @@ def pytest_runtest_makereport(item):
 
         if hasattr(report, 'extras'):
             report.extras = extra
+
+
+@pytest.fixture
+def goto_page(browser_page):
+    def _goto(page_path="inventory.html"):
+        base_url = AppConfiguration.get_common_info()["Url"].rstrip("/")
+        target_url = f"{base_url}/{page_path.lstrip('/')}"
+        # Only navigate if not already on the target page
+        if browser_page.url != target_url:
+            browser_page.goto(target_url)
+        return browser_page
+    return _goto
+
+
+@pytest.fixture(autouse=True, scope="function")
+def reset_cart_if_needed(goto_page):
+    yield
+    page = goto_page()
+    # Check if cart badge is visible
+    badge = page.locator('.shopping_cart_badge')
+    if badge.is_visible():
+        # If badge is visible (cart not empty), open menu and reset app state
+        menu_page = MenuPage(page)
+        menu_page.open_menu()
+        page.click('//a[@data-test="reset-sidebar-link"]')
+        # Optionally, wait for badge to disappear
+        page.wait_for_selector('.shopping_cart_badge', state='detached')
+        menu_page.close_menu()
+        page.reload()
