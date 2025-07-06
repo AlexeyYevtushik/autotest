@@ -11,3 +11,12 @@ class LoginPage:
 
     def get_error(self):
         return self.page.locator('[data-test="error"]')
+
+    def expect_logged_out(self):
+        assert self.page.locator('input[data-test="username"]').is_visible(), "Username field is not visible, user might still be logged in"
+        assert self.page.locator('input[data-test="password"]').is_visible(), "Password field is not visible, user might still be logged in"
+
+    def expect_login_error(self):
+        error_locator = self.page.locator('[data-test="error"]')
+        assert error_locator.is_visible(), "Error message is not visible"
+        return error_locator.inner_text()

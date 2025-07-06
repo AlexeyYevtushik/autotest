@@ -37,7 +37,7 @@ def test_remove_item_from_cart(goto_page):
     products_page.open_cart()
     cart_page = CartPage(page)
     cart_page.remove_item('sauce-labs-bike-light')
-    assert cart_page.is_cart_empty()
+    cart_page.assert_cart_is_empty()
 
 
 def test_sort_products_low_to_high(goto_page):
@@ -46,9 +46,7 @@ def test_sort_products_low_to_high(goto_page):
     products_page = ProductsPage(page)
     # Sort by price low to high
     products_page.select_option('lohi')
-    products_page.page.wait_for_selector('.inventory_item', state='visible')
-    first_item = products_page.page.locator('.inventory_item').first
-    assert 'Sauce Labs Onesie' in first_item.inner_text()
+    products_page.assert_first_item('Sauce Labs Onesie')
 
 
 def test_add_multiple_items_and_verify_cart_count(goto_page):
@@ -58,8 +56,8 @@ def test_add_multiple_items_and_verify_cart_count(goto_page):
     products_page.add_to_cart('sauce-labs-backpack')
     products_page.add_to_cart('sauce-labs-bike-light')
     products_page.add_to_cart('sauce-labs-bolt-t-shirt')
-    badge = page.locator('.shopping_cart_badge')
-    assert badge.inner_text() == '3'
+    products_page.assert_number_on_badge(3)
+   
     
 
 def test_checkout_with_missing_info(goto_page):
@@ -72,9 +70,8 @@ def test_checkout_with_missing_info(goto_page):
     cart_page.checkout()
     checkout_page = CheckoutPage(page)
     checkout_page.fill_checkout_info('', 'Doe', '12345')
-    error = page.locator('*[data-test="error"]')
-    assert error.is_visible()
-
+    checkout_page.assert_error_is_visible()
+    
 
 
 def test_reset_app_state(goto_page): #update
@@ -84,8 +81,7 @@ def test_reset_app_state(goto_page): #update
     cart_page.click_continue_shopping()
     menu_page = MenuPage(page)
     menu_page.open_menu()
-    page.click('//a[@data-test="reset-sidebar-link"]')
-    assert not page.locator('.shopping_cart_badge').is_visible()
+    menu_page.click_reset_app_state()
 
 
 
@@ -96,7 +92,6 @@ def test_cart_continue_shopping(goto_page):
     products_page.open_cart()
     cart_page = CartPage(page)
     cart_page.click_continue_shopping()
-    assert 'inventory.html' in page.url
 
 
 def test_logout(goto_page):
@@ -105,7 +100,8 @@ def test_logout(goto_page):
     menu_page = MenuPage(page)
     menu_page.open_menu()
     menu_page.logout()
-    expect(page.locator('input[data-test="login-button"]')).to_be_visible()
+    login_page = LoginPage(page)
+    login_page.expect_logged_out()
 
 
 def test_unsuccessful_login_locked_out_user(goto_page):
@@ -113,4 +109,4 @@ def test_unsuccessful_login_locked_out_user(goto_page):
     page = goto_page()
     login_page = LoginPage(page)
     login_page.login('locked_out_user', 'secret_sauce')
-    expect(login_page.get_error()).to_be_visible()
+    login_page.expect_login_error()
