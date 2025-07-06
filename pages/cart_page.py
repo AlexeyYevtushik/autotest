@@ -15,3 +15,8 @@ class CartPage:
     
     def click_continue_shopping(self):
         self.page.click('button[data-test="continue-shopping"]')
+        assert 'inventory.html' in self.page.url
+
+
+    def assert_cart_is_empty(self):
+        assert self.is_cart_empty(), "Cart is not empty, items are still present."

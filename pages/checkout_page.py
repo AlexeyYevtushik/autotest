@@ -21,3 +21,8 @@ class CheckoutPage:
 
     def click_cancel(self):
         self.page.click('button[data-test="cancel"]')
+
+    def assert_error_is_visible(self):
+        error_locator = self.page.locator('*[data-test="error"]')
+        assert error_locator.is_visible(), "Error message is not visible"
+        return error_locator.inner_text()
