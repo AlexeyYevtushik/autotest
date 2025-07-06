@@ -13,7 +13,7 @@ class MenuPage:
     def logout(self):
         self.page.click('a[id="logout_sidebar_link"]')
 
-    def click_reset_app_state(self):
+    def click_reset_app_state_badge(self):
         self.page.click('//a[@data-test="reset-sidebar-link"]')
         self.page.wait_for_load_state('networkidle')
         assert 'inventory.html' in self.page.url, "Reset app state did not navigate to inventory page"

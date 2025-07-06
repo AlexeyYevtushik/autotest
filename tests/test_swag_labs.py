@@ -79,7 +79,7 @@ def test_reset_app_state(goto_page): #update
     cart_page.click_continue_shopping()  # Click continue shopping
     menu_page = MenuPage(page)  # Create MenuPage object
     menu_page.open_menu()  # Open menu
-    menu_page.click_reset_app_state()  # Click reset app state
+    menu_page.click_reset_app_state_badge()  # Click reset app state
 
 
 
@@ -104,7 +104,24 @@ def test_logout(goto_page):
 
 def test_unsuccessful_login_locked_out_user(goto_page):
     """E2E: Unsuccessful login as locked_out_user"""
-    page = goto_page()  # Go to inventory page
+    page = goto_page("")  # Go to inventory page
     login_page = LoginPage(page)  # Create LoginPage object
     login_page.login('locked_out_user', 'secret_sauce')  # Try to login as locked_out_user
-    login_page.expect_login_error()  # Assert error is visible
+    login_page.expect_login_error("Epic sadface: Sorry, this user has been locked out.")  # Assert error is visible and text correct
+
+def test_unsuccessful_login_invalid_user(goto_page):
+    """E2E: Unsuccessful login with invalid user"""
+    page = goto_page("")  # Go to inventory page
+    login_page = LoginPage(page)  # Create LoginPage object
+    login_page.login('invalid_user', 'secret_sauce')  # Try to login with invalid user
+    login_page.expect_login_error("Epic sadface: Username and password do not match any user in this service")  # Assert error is visible and text correct
+
+def test_unsuccessful_login_invalid_password(goto_page):
+    """E2E: Unsuccessful login with invalid password"""
+    page = goto_page("")  # Go to inventory page
+    login_page = LoginPage(page)  # Create LoginPage object
+    login_page.login('standard_user', 'wrong_password')  # Try to login with wrong password
+    login_page.expect_login_error("Epic sadface: Username and password do not match any user in this service")  # Assert error is visible
+
+
+    
