@@ -8,105 +8,103 @@ from pages.menu_page import MenuPage
 
 def test_successful_login(goto_page):
     """E2E: Successful login as standard_user"""
-    page = goto_page("")
-    login_page = LoginPage(page)
-    login_page.login('standard_user', 'secret_sauce')
-    products_page = ProductsPage(page)
-    expect(products_page.get_title()).to_have_text('Products')
+    page = goto_page("")  # Go to the base page
+    login_page = LoginPage(page)  # Create LoginPage object
+    login_page.login('standard_user', 'secret_sauce')  # Perform login
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    expect(products_page.get_title()).to_have_text('Products')  # Assert successful login
 
 
 def test_add_single_item_to_cart_and_checkout(goto_page):
     """E2E: Add 'Sauce Labs Backpack' to cart and checkout"""
-    page = goto_page()
-    products_page = ProductsPage(page)
-    products_page.add_to_cart('sauce-labs-backpack')
-    products_page.open_cart()
-    cart_page = CartPage(page)
-    cart_page.checkout()
-    checkout_page = CheckoutPage(page)
-    checkout_page.fill_checkout_info('John', 'Doe', '12345')
-    checkout_page.finish()
-    expect(checkout_page.get_confirmation()).to_have_text('Thank you for your order!')
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.add_to_cart('sauce-labs-backpack')  # Add backpack to cart
+    products_page.open_cart()  # Open cart
+    cart_page = CartPage(page)  # Create CartPage object
+    cart_page.checkout()  # Click checkout
+    checkout_page = CheckoutPage(page)  # Create CheckoutPage object
+    checkout_page.fill_checkout_info('John', 'Doe', '12345')  # Fill checkout info
+    checkout_page.finish()  # Finish checkout
+    expect(checkout_page.get_confirmation()).to_have_text('Thank you for your order!')  # Assert order success
 
 
 def test_remove_item_from_cart(goto_page):
     """E2E: Add and remove 'Sauce Labs Bike Light' from cart"""
-    page = goto_page()
-    products_page = ProductsPage(page)
-    products_page.add_to_cart('sauce-labs-bike-light')
-    products_page.open_cart()
-    cart_page = CartPage(page)
-    cart_page.remove_item('sauce-labs-bike-light')
-    cart_page.assert_cart_is_empty()
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.add_to_cart('sauce-labs-bike-light')  # Add bike light to cart
+    products_page.open_cart()  # Open cart
+    cart_page = CartPage(page)  # Create CartPage object
+    cart_page.remove_item('sauce-labs-bike-light')  # Remove bike light from cart
+    cart_page.assert_cart_is_empty()  # Assert cart is empty
 
 
 def test_sort_products_low_to_high(goto_page):
     """E2E: Sort products by price low to high and verify order changes"""
-    page = goto_page()
-    products_page = ProductsPage(page)
-    # Sort by price low to high
-    products_page.select_option('lohi')
-    products_page.assert_first_item('Sauce Labs Onesie')
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.select_option('lohi')  # Sort by price low to high
+    products_page.assert_first_item('Sauce Labs Onesie')  # Assert first item is the cheapest
 
 
 def test_add_multiple_items_and_verify_cart_count(goto_page):
     """E2E: Add multiple items to cart and verify cart badge count"""
-    page = goto_page()
-    products_page = ProductsPage(page)
-    products_page.add_to_cart('sauce-labs-backpack')
-    products_page.add_to_cart('sauce-labs-bike-light')
-    products_page.add_to_cart('sauce-labs-bolt-t-shirt')
-    products_page.assert_number_on_badge(3)
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.add_to_cart('sauce-labs-backpack')  # Add backpack to cart
+    products_page.add_to_cart('sauce-labs-bike-light')  # Add bike light to cart
+    products_page.add_to_cart('sauce-labs-bolt-t-shirt')  # Add bolt t-shirt to cart
+    products_page.assert_number_on_badge(3)  # Assert cart badge shows 3
    
     
-
 def test_checkout_with_missing_info(goto_page):
     """E2E: Try to checkout with missing info and verify error message"""
-    page = goto_page()
-    products_page = ProductsPage(page)
-    products_page.add_to_cart('sauce-labs-backpack')
-    products_page.open_cart()
-    cart_page = CartPage(page)
-    cart_page.checkout()
-    checkout_page = CheckoutPage(page)
-    checkout_page.fill_checkout_info('', 'Doe', '12345')
-    checkout_page.assert_error_is_visible()
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.add_to_cart('sauce-labs-backpack')  # Add backpack to cart
+    products_page.open_cart()  # Open cart
+    cart_page = CartPage(page)  # Create CartPage object
+    cart_page.checkout()  # Click checkout
+    checkout_page = CheckoutPage(page)  # Create CheckoutPage object
+    checkout_page.fill_checkout_info('', 'Doe', '12345')  # Leave first name blank
+    checkout_page.assert_error_is_visible()  # Assert error is visible
     
 
 
 def test_reset_app_state(goto_page): #update
     """E2E: Add item, reset app state, and verify cart is empty"""
-    page = goto_page('cart.html')
-    cart_page = CartPage(page)
-    cart_page.click_continue_shopping()
-    menu_page = MenuPage(page)
-    menu_page.open_menu()
-    menu_page.click_reset_app_state()
+    page = goto_page('cart.html')  # Go to cart page
+    cart_page = CartPage(page)  # Create CartPage object
+    cart_page.click_continue_shopping()  # Click continue shopping
+    menu_page = MenuPage(page)  # Create MenuPage object
+    menu_page.open_menu()  # Open menu
+    menu_page.click_reset_app_state()  # Click reset app state
 
 
 
 def test_cart_continue_shopping(goto_page):
     """E2E: Go to cart, click 'Continue Shopping', and verify navigation to products page"""
-    page = goto_page()
-    products_page = ProductsPage(page)
-    products_page.open_cart()
-    cart_page = CartPage(page)
-    cart_page.click_continue_shopping()
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.open_cart()  # Open cart
+    cart_page = CartPage(page)  # Create CartPage object
+    cart_page.click_continue_shopping()  # Click continue shopping
 
 
 def test_logout(goto_page):
     """E2E: Login and logout"""
-    page = goto_page()
-    menu_page = MenuPage(page)
-    menu_page.open_menu()
-    menu_page.logout()
-    login_page = LoginPage(page)
-    login_page.expect_logged_out()
+    page = goto_page()  # Go to inventory page
+    menu_page = MenuPage(page)  # Create MenuPage object
+    menu_page.open_menu()  # Open menu
+    menu_page.logout()  # Click logout
+    login_page = LoginPage(page)  # Create LoginPage object
+    login_page.expect_logged_out()  # Assert logged out
 
 
 def test_unsuccessful_login_locked_out_user(goto_page):
     """E2E: Unsuccessful login as locked_out_user"""
-    page = goto_page()
-    login_page = LoginPage(page)
-    login_page.login('locked_out_user', 'secret_sauce')
-    login_page.expect_login_error()
+    page = goto_page()  # Go to inventory page
+    login_page = LoginPage(page)  # Create LoginPage object
+    login_page.login('locked_out_user', 'secret_sauce')  # Try to login as locked_out_user
+    login_page.expect_login_error()  # Assert error is visible
