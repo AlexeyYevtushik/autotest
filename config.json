@@ -1,10 +1,10 @@
 {
-    "Headless": "True",
+    "Headless": "False",
     "SlowMo": "0",
-    "DefaultNavigationTimeout": "120000",
-    "DefaultTimeout": "60000",
+    "DefaultNavigationTimeout": "20000",
+    "DefaultTimeout": "3000",
    
     "common info" : {
-      "Url" : "https://www.google.com/"
+      "Url" : "https://www.saucedemo.com/"
     }
 }
