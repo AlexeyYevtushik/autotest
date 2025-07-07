@@ -47,6 +47,27 @@ def test_sort_products_low_to_high(goto_page):
     products_page.select_option('lohi')  # Sort by price low to high
     products_page.assert_first_item('Sauce Labs Onesie')  # Assert first item is the cheapest
 
+def test_sort_products_high_to_low(goto_page):
+    """E2E: Sort products by price high to low and verify order changes"""
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.select_option('hilo')  # Sort by price high to low
+    products_page.assert_first_item('Sauce Labs Fleece Jacket')  # Assert first item is the most expensive
+
+def test_sort_products_alphabetical(goto_page):
+    """E2E: Sort products alphabetically and verify order changes"""
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.select_option('az')  # Sort alphabetically A-Z
+    products_page.assert_first_item('Sauce Labs Backpack')  # Assert first item is alphabetically first
+
+def test_sort_products_reverse_alphabetical(goto_page):
+    """E2E: Sort products in reverse alphabetical order and verify order changes"""
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.select_option('za')  # Sort alphabetically Z-A
+    products_page.assert_first_item('Test.allTheThings() T-Shirt (Red)')  # Assert first item is alphabetically last
+
 
 def test_add_multiple_items_and_verify_cart_count(goto_page):
     """E2E: Add multiple items to cart and verify cart badge count"""
@@ -73,13 +94,27 @@ def test_checkout_with_missing_info(goto_page):
 
 
 def test_reset_app_state(goto_page): #update
-    """E2E: Add item, reset app state, and verify cart is empty"""
-    page = goto_page('cart.html')  # Go to cart page
+    """E2E: Add item, reset app state, and verify cart is empty on Products page"""
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.add_to_cart('sauce-labs-backpack')  # Add backpack to cart
+    products_page.open_cart()  # Open cart
     cart_page = CartPage(page)  # Create CartPage object
     cart_page.click_continue_shopping()  # Click continue shopping
     menu_page = MenuPage(page)  # Create MenuPage object
     menu_page.open_menu()  # Open menu
-    menu_page.click_reset_app_state_badge()  # Click reset app state
+    menu_page.click_reset_app_state_on_products_page()  # Click reset app state
+
+def test_reset_app_state_cart_on_cart_page(goto_page):
+    """E2E: Add item, reset app state, and verify cart is empty on Products page"""
+    page = goto_page()
+    page.reload()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.add_to_cart('sauce-labs-backpack')  # Add backpack to cart
+    products_page.open_cart()  # Open cart
+    menu_page = MenuPage(page)  # Create MenuPage object
+    menu_page.open_menu()  # Open menu
+    menu_page.click_reset_app_state_on_cart_page()  # Click reset app state
 
 
 
@@ -122,6 +157,27 @@ def test_unsuccessful_login_invalid_password(goto_page):
     login_page = LoginPage(page)  # Create LoginPage object
     login_page.login('standard_user', 'wrong_password')  # Try to login with wrong password
     login_page.expect_login_error("Epic sadface: Username and password do not match any user in this service")  # Assert error is visible
+
+def test_unsuccessful_login_empty_fields(goto_page):
+    """E2E: Unsuccessful login with empty username and password fields"""
+    page = goto_page("")  # Go to inventory page
+    login_page = LoginPage(page)  # Create LoginPage object
+    login_page.login('', '')  # Try to login with empty fields
+    login_page.expect_login_error("Epic sadface: Username is required")  # Assert error is visible and text correct 
+
+def test_unsuccessful_login_empty_username(goto_page):
+    """E2E: Unsuccessful login with empty username field"""
+    page = goto_page("")  # Go to inventory page
+    login_page = LoginPage(page)  # Create LoginPage object
+    login_page.login('', 'secret_sauce')  # Try to login with empty username
+    login_page.expect_login_error("Epic sadface: Username is required")  # Assert error is visible and text correct
+
+def test_unsuccessful_login_empty_password(goto_page):
+    """E2E: Unsuccessful login with empty password field"""
+    page = goto_page("")  # Go to inventory page
+    login_page = LoginPage(page)  # Create LoginPage object
+    login_page.login('standard_user', '')  # Try to login with empty password
+    login_page.expect_login_error("Epic sadface: Password is required")  # Assert error is visible and text correct
 
 
     
