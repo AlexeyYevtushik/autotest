@@ -36,4 +36,4 @@ COPY . .
 RUN mkdir -p /app/.pytest_cache
 
 # Default command (can be overridden)
-CMD ["pytest", "tests/test_swag_labs.py"]
+CMD ["pytest", "--html=reports/report.html", "--self-contained-html"]
