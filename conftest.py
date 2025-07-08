@@ -68,23 +68,29 @@ def pytest_runtest_makereport(item):
     Extends the PyTest Plugin to take and embed screenshot in html report, whenever test fails.
     :param item:
     """
-    screenshot_bytes = ''
+    import base64
     pytest_html = item.config.pluginmanager.getplugin('html')
     outcome = yield
     report = outcome.get_result()
     extra = getattr(report, 'extra', [])
 
-    if report.when == 'call' or report.when == "setup":
-        xfail = hasattr(report, 'wasxfail')
-
-        # Try to get the page from the test class instance
-        page = getattr(item.instance, "page", None)
-        if (report.failed or xfail) and page is not None and pytest_html is not None:
-            screenshot_bytes = page.screenshot()
-            extra.append(pytest_html.extras.image(base64.b64encode(screenshot_bytes).decode(), ''))
-
-        if hasattr(report, 'extras'):
-            report.extras = extra
+    # Only take screenshot for failures or xfail
+    if report.when in ('call', 'setup') and (report.failed or hasattr(report, 'wasxfail')):
+        page = getattr(getattr(item, 'instance', None), 'page', None)
+        # Fallback for function-based tests
+        if page is None:
+            try:
+                page = item.funcargs.get('browser_page', None)
+            except Exception:
+                page = None
+        if page is not None and pytest_html is not None:
+            try:
+                screenshot_bytes = page.screenshot(full_page=True)
+                img_html = pytest_html.extras.image(base64.b64encode(screenshot_bytes).decode('utf-8'), mime_type='image/png')
+                extra.append(img_html)
+            except Exception as e:
+                extra.append(pytest_html.extras.text(f"Screenshot failed: {e}"))
+    report.extra = extra
 
 
 @pytest.fixture
