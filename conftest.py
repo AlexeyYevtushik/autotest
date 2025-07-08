@@ -114,3 +114,19 @@ def reset_cart_if_needed(goto_page):
         page.wait_for_selector('.shopping_cart_badge', state='detached')
         menu_page.close_menu()
         page.reload()
+
+
+@pytest.fixture(autouse=True, scope="function")
+def close_browser_error_dialog(browser_page):
+    """
+    Automatically closes any browser-level dialogs (alerts, confirms, prompts) that appear during a test.
+    Useful for handling browser errors or unexpected dialogs (e.g., after sorting or navigation).
+    """
+    def handle_dialog(dialog):
+        dialog.accept()
+    browser_page.on('dialog', handle_dialog)
+    yield
+    try:
+        browser_page.off('dialog', handle_dialog)
+    except Exception:
+        pass
