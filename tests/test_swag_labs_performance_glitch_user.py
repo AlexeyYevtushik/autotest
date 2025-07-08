@@ -156,6 +156,33 @@ def test_product_names_and_descriptions_no_invalid_symbols(goto_page):
     page = goto_page()  # Go to inventory page
     product_page= ProductsPage(page)  # Create ProductsPage object
     product_page.assert_product_names_and_descriptions_no_invalid_symbols()  # Assert product names and descriptions do not contain invalid symbols
+
+@pytest.mark.smoke
+def test_click_menu_all_items(goto_page):
+    """E2E: Click menu and verify 'All Items' is selected"""
+    page = goto_page()  # Go to inventory page
+    menu_page = MenuPage(page)  # Create MenuPage object
+    menu_page.open_menu()  # Open menu
+    menu_page.click_all_items()  # Click 'All Items'
+
+@pytest.mark.smoke
+def test_click_menu_all_items_on_cart_page(goto_page):
+    """E2E: Click menu and verify 'All Items' is selected on cart page"""
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.add_to_cart('sauce-labs-backpack')  # Add backpack to cart
+    products_page.open_cart()  # Open cart
+    menu_page = MenuPage(page)  # Create MenuPage object
+    menu_page.open_menu()  # Open menu
+    menu_page.click_all_items()  # Click 'All Items'
+
+@pytest.mark.smoke
+def test_click_about(goto_page):
+    """E2E: Click 'About' link in menu and verify navigation to about page"""
+    page = goto_page()  # Go to inventory page
+    menu_page = MenuPage(page)  # Create MenuPage object
+    menu_page.open_menu()  # Open menu
+    menu_page.click_about()  # Click 'About' link
   
 
 @pytest.mark.smoke
