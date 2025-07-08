@@ -29,3 +29,14 @@ class MenuPage:
         assert 'cart.html' in self.page.url, "Reset app state did not navigate to cart page"
         assert not self.page.locator('.cart_item').is_visible(), "Cart items are still present after reset"
 
+    def click_all_items(self):
+        self.page.click('a[id="inventory_sidebar_link"]', timeout=self.default_timeout)
+        self.page.wait_for_load_state('networkidle', timeout=self.default_navigation_timeout)
+        assert 'inventory.html' in self.page.url, "Clicking 'All Items' did not navigate to inventory page"
+        assert self.page.locator('.inventory_item').count() > 0, "No items found on inventory page after clicking 'All Items'"
+
+    def click_about(self):
+        self.page.click('//a[@data-test="about-sidebar-link"]', timeout=self.default_timeout)
+        self.page.wait_for_load_state('domcontentloaded', timeout=self.default_navigation_timeout)
+        assert 'https://saucelabs.com/' in self.page.url, "Clicking 'About' did not navigate to Sauce Labs website"
+        assert self.page.locator('h1').is_visible(), "About page header is not visible"
