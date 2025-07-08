@@ -126,6 +126,17 @@ def test_cart_continue_shopping(goto_page):
     cart_page = CartPage(page)  # Create CartPage object
     cart_page.click_continue_shopping()  # Click continue shopping
 
+def test_all_product_images_are_unique(goto_page):
+    """E2E: Check that every product image on the inventory page is unique"""
+    page = goto_page()  # Go to inventory page
+    # Get all image src attributes for product images
+    image_srcs = page.eval_on_selector_all(
+        '.inventory_item_img img',
+        'nodes => nodes.map(n => n.src)'
+    )
+    # Assert all images are unique
+    assert len(image_srcs) == len(set(image_srcs)), "Not all product images are unique!"
+
 
 def test_logout(goto_page):
     """E2E: Login and logout"""
