@@ -7,7 +7,7 @@ from pages.menu_page import MenuPage
 import pytest
 # No BaseTest needed, use fixtures directly
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_successful_login(goto_page):
     """E2E: Successful login as standard_user"""
     page = goto_page("")  # Go to the base page
@@ -17,7 +17,7 @@ def test_successful_login(goto_page):
     expect(products_page.get_title()).to_have_text('Products')  # Assert successful login
 
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_add_single_item_to_cart_and_checkout(goto_page):
     """E2E: Add 'Sauce Labs Backpack' to cart and checkout"""
     page = goto_page()  # Go to inventory page
@@ -32,7 +32,7 @@ def test_add_single_item_to_cart_and_checkout(goto_page):
     expect(checkout_page.get_confirmation()).to_have_text('Thank you for your order!')  # Assert order success
 
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_remove_item_from_cart(goto_page):
     """E2E: Add and remove 'Sauce Labs Bike Light' from cart"""
     page = goto_page()  # Go to inventory page
@@ -80,7 +80,7 @@ def test_sort_products_reverse_alphabetical(goto_page):
     products_page.assert_first_item('Test.allTheThings() T-Shirt (Red)')  # Assert first item is alphabetically last
 
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_add_multiple_items_and_verify_cart_count(goto_page):
     """E2E: Add multiple items to cart and verify cart badge count"""
     page = goto_page()  # Go to inventory page
@@ -105,7 +105,7 @@ def test_checkout_with_missing_info(goto_page):
     checkout_page.assert_error_is_visible()  # Assert error is visible
 
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_reset_app_state(goto_page): #update
     """E2E: Add item, reset app state, and verify cart is empty on Products page"""
     page = goto_page()  # Go to inventory page
@@ -119,7 +119,7 @@ def test_reset_app_state(goto_page): #update
     menu_page.click_reset_app_state_on_products_page()  # Click reset app state
 
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_reset_app_state_cart_on_cart_page(goto_page):
     """E2E: Add item, reset app state, and verify cart is empty on Products page"""
     page = goto_page()
@@ -132,7 +132,7 @@ def test_reset_app_state_cart_on_cart_page(goto_page):
     menu_page.click_reset_app_state_on_cart_page()  # Click reset app state
 
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_cart_continue_shopping(goto_page):
     """E2E: Go to cart, click 'Continue Shopping', and verify navigation to products page"""
     page = goto_page()  # Go to inventory page
@@ -157,7 +157,7 @@ def test_product_names_and_descriptions_no_invalid_symbols(goto_page):
     product_page= ProductsPage(page)  # Create ProductsPage object
     product_page.assert_product_names_and_descriptions_no_invalid_symbols()  # Assert product names and descriptions do not contain invalid symbols
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_click_menu_all_items(goto_page):
     """E2E: Click menu and verify 'All Items' is selected"""
     page = goto_page()  # Go to inventory page
@@ -165,7 +165,7 @@ def test_click_menu_all_items(goto_page):
     menu_page.open_menu()  # Open menu
     menu_page.click_all_items()  # Click 'All Items'
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_click_menu_all_items_on_cart_page(goto_page):
     """E2E: Click menu and verify 'All Items' is selected on cart page"""
     page = goto_page()  # Go to inventory page
@@ -176,7 +176,7 @@ def test_click_menu_all_items_on_cart_page(goto_page):
     menu_page.open_menu()  # Open menu
     menu_page.click_all_items()  # Click 'All Items'
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_click_about(goto_page):
     """E2E: Click 'About' link in menu and verify navigation to about page"""
     page = goto_page()  # Go to inventory page
@@ -185,7 +185,7 @@ def test_click_about(goto_page):
     menu_page.click_about()  # Click 'About' link
   
 
-@pytest.mark.smoke
+@pytest.mark.full_run
 def test_logout(goto_page):
     """E2E: Login and logout"""
     page = goto_page()  # Go to inventory page

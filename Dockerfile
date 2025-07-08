@@ -36,7 +36,7 @@ COPY . .
 RUN mkdir -p /app/.pytest_cache
 
 # Default command to smoke and full_run tests (can be overridden)
-CMD ["pytest","-m smoke or full_run", "--html=reports/report.html", "--self-contained-html"]
+#CMD ["pytest","-m smoke or full_run", "--html=reports/report.html", "--self-contained-html"]
 
 # Uncomment the following line to run only smoke tests
-#CMD ["pytest","-m smoke", "--html=reports/report.html", "--self-contained-html"]
+CMD ["pytest","-m smoke", "--html=reports/report.html", "--self-contained-html"]
