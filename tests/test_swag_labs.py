@@ -129,14 +129,16 @@ def test_cart_continue_shopping(goto_page):
 def test_all_product_images_are_unique(goto_page):
     """E2E: Check that every product image on the inventory page is unique"""
     page = goto_page()  # Go to inventory page
-    # Get all image src attributes for product images
-    image_srcs = page.eval_on_selector_all(
-        '.inventory_item_img img',
-        'nodes => nodes.map(n => n.src)'
-    )
-    # Assert all images are unique
-    assert len(image_srcs) == len(set(image_srcs)), "Not all product images are unique!"
+    products_page = ProductsPage(page) 
+    products_page.check_images_unique()  # Check that all product images are unique
 
+
+def test_product_names_and_descriptions_no_invalid_symbols(goto_page):
+    """E2E: Ensure product names and descriptions do not contain invalid symbols like 'text.text()'"""
+    page = goto_page()  # Go to inventory page
+    product_page= ProductsPage(page)  # Create ProductsPage object
+    product_page.assert_product_names_and_descriptions_no_invalid_symbols()  # Assert product names and descriptions do not contain invalid symbols
+  
 
 def test_logout(goto_page):
     """E2E: Login and logout"""
