@@ -1,4 +1,5 @@
 from playwright.sync_api import Page
+import re
 
 class ProductsPage:
     def __init__(self, page: Page):
@@ -37,4 +38,24 @@ class ProductsPage:
         else:
             assert not badge.is_visible(), "Cart badge should not be visible when cart is empty"
 
+    def check_images_unique(self):
+        """Check that every product image on the inventory page is unique"""
+        image_srcs = self.page.eval_on_selector_all(
+            '.inventory_item_img img',
+            'nodes => nodes.map(n => n.src)'
+        )
+        assert len(image_srcs) == len(set(image_srcs)), "Not all product images are unique!"
 
+    def assert_product_names_and_descriptions_no_invalid_symbols(self):
+        """E2E: Ensure product names and descriptions do not contain invalid symbols like 'text.text()'"""
+        names = self.page.eval_on_selector_all('.inventory_item_name', 'nodes => nodes.map(n => n.textContent)')
+        descriptions = self.page.eval_on_selector_all('.inventory_item_desc', 'nodes => nodes.map(n => n.textContent)')
+
+        # Define a regex for allowed characters (alphanumeric, space, basic punctuation)
+        allowed_pattern = re.compile(r"\.[a-zA-Z()]+")
+        
+        for name in names:
+            assert allowed_pattern.match(name.strip()), f"Invalid symbol found in product name: {name!r}"
+        
+        for description in descriptions:
+            assert allowed_pattern.match(description.strip()), f"Invalid symbol found in product description: {description!r}"
