@@ -2,7 +2,7 @@
     "Headless": "True",
     "SlowMo": "0",
     "DefaultNavigationTimeout": "20000",
-    "DefaultTimeout": "3000",
+    "DefaultTimeout": "10000",
    
     "common info" : {
       "Url" : "https://www.saucedemo.com/"

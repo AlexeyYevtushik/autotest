@@ -1,20 +1,24 @@
 from playwright.sync_api import Page
+from utils.read_config import AppConfiguration
 import re
 
 class ProductsPage:
     def __init__(self, page: Page):
         self.page = page
+        config = AppConfiguration.get_app_configuration()
+        self.default_navigation_timeout = int(config["DefaultNavigationTimeout"])
+        self.default_timeout = int(config["DefaultTimeout"])
 
     def add_to_cart(self, item_test_id: str):
-        self.page.wait_for_selector(f'button[data-test="add-to-cart-{item_test_id}"]', timeout=10000, state='visible')
+        self.page.wait_for_selector(f'button[data-test="add-to-cart-{item_test_id}"]', timeout=self.default_timeout, state='visible')
         self.page.click(f'button[data-test="add-to-cart-{item_test_id}"]')
 
     def remove_from_cart(self, item_test_id: str):
-        self.page.wait_for_selector(f'button[data-test="remove-{item_test_id}"]', timeout=10000, state='visible')
+        self.page.wait_for_selector(f'button[data-test="remove-{item_test_id}"]', timeout=self.default_timeout, state='visible')
         self.page.click(f'button[data-test="remove-{item_test_id}"]')
 
     def open_cart(self):
-        self.page.wait_for_selector('.shopping_cart_link', timeout=10000, state='visible')
+        self.page.wait_for_selector('.shopping_cart_link', timeout=self.default_timeout, state='visible')
         self.page.click('.shopping_cart_link')
 
     def get_title(self):
@@ -24,7 +28,7 @@ class ProductsPage:
         sort_selection = self.page.locator('//select[@data-test="product-sort-container"]')
         sort_selection.click()
         self.page.locator('//select[@data-test="product-sort-container"]').select_option(sort_option)
-        self.page.wait_for_selector('.inventory_item', state='visible')
+        self.page.wait_for_selector('.inventory_item', state='visible', timeout=self.default_timeout)
 
     def assert_first_item(self, name):
         first_item = self.page.locator('.inventory_item').first
