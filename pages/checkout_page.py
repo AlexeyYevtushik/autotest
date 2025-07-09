@@ -30,3 +30,10 @@ class CheckoutPage:
         error_locator = self.page.locator('*[data-test="error"]')
         assert error_locator.is_visible(), "Error message is not visible"
         return error_locator.inner_text()
+    
+    def expect_confirmation_to_have_text(self, text: str):
+        """Assert that the confirmation message contains the specified text."""
+        confirmation_locator = self.get_confirmation()
+        assert confirmation_locator.is_visible(), "Confirmation message is not visible"
+        confirmation_text = confirmation_locator.inner_text()
+        assert text in confirmation_text, f"Expected confirmation to contain '{text}', but got '{confirmation_text}'"
