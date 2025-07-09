@@ -18,21 +18,34 @@ docker run --rm -v $(pwd)/reports:/app/reports scrap-test
 ```
 - The HTML report will be available in your local `reports/` directory after the run.
 
-## Run Only Smoke or Only Smoke and Full Run Tests
+## Running Tests with Docker
 
-- **Smoke tests only:**
-  Uncomment the last line in the Dockerfile or override the command:
-  ```bash
-  docker run --rm scrap-test pytest -m smoke --html=reports/report.html --self-contained-html
-  ```
+1. **Build the Docker image:**
+   ```sh
+   docker build -t myimage .
+   ```
+2. **Run the tests and generate the HTML report:**
+   ```sh
+   docker run --rm -v $(pwd)/reports:/app/reports myimage
+   ```
+   - The test report will be available on your host in the `reports/` directory as `report.html`.
 
-  ```
-- **Both suites together (default):**
-  ```bash
-  docker run --rm scrap-test
-  # or
-  docker run --rm scrap-test pytest -m "smoke or full_run" --html=reports/report.html --self-contained-html
-  ```
+3. **Test selection:**
+   - To run only smoke tests, edit the `CMD` in the Dockerfile to:
+     ```dockerfile
+     CMD ["pytest","-m smoke", "--html=reports/report.html", "--self-contained-html"]
+     ```
+   - To run both smoke and full_run tests, use:
+     ```dockerfile
+     CMD ["pytest","-m smoke or full_run", "--html=reports/report.html", "--self-contained-html"]
+     ```
+
+4. **Requirements:**
+   - Ensure `pytest-html` is listed in your `requirements.txt`.
+   - The Dockerfile creates and sets permissions for the `reports/` directory automatically.
+
+5. **Accessing the report:**
+   - After the container finishes, open `reports/report.html` in your browser to view the results and screenshots for failed tests.
 
 ## View Logs
 
@@ -50,14 +63,6 @@ cat logs/app.log
 ```powershell
 docker run --rm -v ${PWD}/logs:/app/logs scrap-test
 Get-Content logs/app.log
-```
-
-## Custom Test Run
-
-To run a different test file, override the default command:
-
-```bash
-docker run --rm scrap-test pytest tests/test_base.py
 ```
 
 ## Reports
@@ -90,6 +95,7 @@ If you want to run tests locally (not in Docker):
 - Configuration is in `config.json`.
 - Test results and reports are in the `reports/` directory.
 - Use `pytest -m smoke` or `pytest -m "smoke or full_run"` to select test groups.
+- Full run takes less then 7 minutes. Smoke run takes about 30 seconds
 
 ---
 

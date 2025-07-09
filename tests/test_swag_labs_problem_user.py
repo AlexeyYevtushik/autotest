@@ -12,10 +12,10 @@ def test_successful_login(goto_page):
     """E2E: Successful login as standard_user"""
     page = goto_page("")  # Go to the base page
     login_page = LoginPage(page)  # Create LoginPage object
-    login_page.login('problem_user', 'secret_sauce')  # Perform login
+    login_page.login('problem_user', 'secret_sauce')  # Perform login by problem_user
     products_page = ProductsPage(page)  # Create ProductsPage object
-    expect(products_page.get_title()).to_have_text('Products')  # Assert successful login
-
+    products_page.expect_title_contains_text('Products')  # Assert successful login
+    
 
 @pytest.mark.full_run
 def test_add_single_item_to_cart_and_checkout(goto_page):
@@ -29,7 +29,7 @@ def test_add_single_item_to_cart_and_checkout(goto_page):
     checkout_page = CheckoutPage(page)  # Create CheckoutPage object
     checkout_page.fill_checkout_info('John', 'Doe', '12345')  # Fill checkout info
     checkout_page.finish()  # Finish checkout
-    expect(checkout_page.get_confirmation()).to_have_text('Thank you for your order!')  # Assert order success
+    checkout_page.expect_confirmation_to_have_text('Thank you for your order!')  # Assert order success
 
 
 @pytest.mark.full_run

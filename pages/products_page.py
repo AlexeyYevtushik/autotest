@@ -63,3 +63,9 @@ class ProductsPage:
         
         for description in descriptions:
             assert allowed_pattern.match(description.strip()), f"Invalid symbol found in product description: {description!r}"
+
+    def expect_title_contains_text(self, text: str):
+        """Assert that the page title contains the specified text."""
+        self.page.wait_for_selector('.title', timeout=self.default_timeout)
+        title = self.page.locator('.title').text_content()
+        assert text in title, f"Expected title to contain '{text}', but got '{title}'"
