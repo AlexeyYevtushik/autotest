@@ -10,6 +10,9 @@ build/
 # Ignore coverage reports
 reports/
 
+# Ignore test screenshots directories
+tests/expected_screenshots/
+
 # Ignore virtual environment
 venv/
 
