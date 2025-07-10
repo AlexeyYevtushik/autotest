@@ -5,6 +5,8 @@ from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
 from pages.menu_page import MenuPage
 import pytest
+from pathlib import Path
+
 # No BaseTest needed, use fixtures directly
 
 @pytest.mark.smoke
@@ -106,7 +108,7 @@ def test_checkout_with_missing_info(goto_page):
 
 
 @pytest.mark.smoke
-def test_reset_app_state(goto_page): #update
+def test_reset_app_state(goto_page): 
     """E2E: Add item, reset app state, and verify cart is empty on Products page"""
     page = goto_page()  # Go to inventory page
     products_page = ProductsPage(page)  # Create ProductsPage object
@@ -151,11 +153,19 @@ def test_all_product_images_are_unique(goto_page):
 
 
 @pytest.mark.full_run
-def test_product_names_and_descriptions_no_invalid_symbols(goto_page):
-    """E2E: Ensure product names and descriptions do not contain invalid symbols like 'text.text()'"""
+def test_product_names_have_no_invalid_symbols(goto_page):
+    """E2E: Ensure product names do not contain invalid symbols like 'text.text()'"""
     page = goto_page()  # Go to inventory page
     product_page= ProductsPage(page)  # Create ProductsPage object
-    product_page.assert_product_names_and_descriptions_no_invalid_symbols()  # Assert product names and descriptions do not contain invalid symbols
+    product_page.assert_product_names_have_no_invalid_symbols()  # Assert product names do not contain invalid symbols
+
+@pytest.mark.full_run
+def test_product_descriptions_have_no_invalid_symbols(goto_page):
+    """E2E: Ensure product descriptions do not contain invalid symbols like 'text.text()'"""
+    page = goto_page()  # Go to inventory page
+    product_page= ProductsPage(page)  # Create ProductsPage object
+    product_page.assert_product_descriptions_have_no_invalid_symbols()  # Assert product names do not contain invalid symbols
+
 
 @pytest.mark.smoke
 def test_click_menu_all_items(goto_page):
@@ -183,6 +193,28 @@ def test_click_about(goto_page):
     menu_page = MenuPage(page)  # Create MenuPage object
     menu_page.open_menu()  # Open menu
     menu_page.click_about()  # Click 'About' link
+
+@pytest.mark.full_run
+def test_click_facebook_button(goto_page):
+    """E2E: Click Facebook button in footer and verify navigation to Facebook page"""
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.click_facebook_button()  # Click Facebook button
+
+
+@pytest.mark.full_run
+def test_click_x_button(goto_page):
+    """E2E: Click X button in footer and verify navigation to X page"""
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.click_x_button()  # Click X button
+
+@pytest.mark.full_run
+def test_click_linkedin_button(goto_page):
+    """E2E: Click LinkedIn button in footer and verify navigation to LinkedIn page"""
+    page = goto_page()  # Go to inventory page
+    products_page = ProductsPage(page)  # Create ProductsPage object
+    products_page.click_linkedin_button()  # Click LinkedIn button
 
 @pytest.mark.smoke
 def test_logout(goto_page):
@@ -247,5 +279,41 @@ def test_unsuccessful_login_empty_password(goto_page):
     login_page = LoginPage(page)  # Create LoginPage object
     login_page.login('standard_user', '')  # Try to login with empty password
     login_page.expect_login_error("Epic sadface: Password is required")  # Assert error is visible and text correct
+
+@pytest.mark.smoke
+def test_capture_expected_screenshots(goto_page):
+    """
+    Capture and save screenshots for each main page object to tests/expected_screenshots.
+    """
+    screenshots_dir = Path('tests/expected_screenshots')
+    screenshots_dir.mkdir(parents=True, exist_ok=True)
+
+    # Login Page
+    page = goto_page("")
+    login_page = LoginPage(page)
+    login_page.page.screenshot(path=str(screenshots_dir / 'login_page_expected.png'), full_page=True)
+
+    # Products Page
+    login_page.login('standard_user', 'secret_sauce')
+    products_page = ProductsPage(page)
+    products_page.page.screenshot(path=str(screenshots_dir / 'products_page_expected.png'), full_page=True)
+
+    # Cart Page
+    products_page.add_to_cart('sauce-labs-backpack')
+    products_page.open_cart()
+    cart_page = CartPage(page)
+    cart_page.page.screenshot(path=str(screenshots_dir / 'cart_page_expected.png'), full_page=True)
+
+    # Checkout Page
+    cart_page.checkout()
+    checkout_page = CheckoutPage(page)
+    checkout_page.page.screenshot(path=str(screenshots_dir / 'checkout_page_expected.png'), full_page=True)
+
+    # Menu Page (open menu on products page)
+    page = goto_page()
+    menu_page = MenuPage(page)
+    menu_page.open_menu()
+    menu_page.page.screenshot(path=str(screenshots_dir / 'menu_page_expected.png'), full_page=True)
+    menu_page.close_menu()
 
 

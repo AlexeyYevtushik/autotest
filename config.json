@@ -3,7 +3,10 @@
     "SlowMo": "0",
     "DefaultNavigationTimeout": "60000",
     "DefaultTimeout": "15000",
-   
+    "Resolution": {
+        "width": 1920,
+        "height": 1080
+    },
     "common info" : {
       "Url" : "https://www.saucedemo.com/"
     }

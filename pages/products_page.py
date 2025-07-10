@@ -50,22 +50,63 @@ class ProductsPage:
         )
         assert len(image_srcs) == len(set(image_srcs)), "Not all product images are unique!"
 
-    def assert_product_names_and_descriptions_no_invalid_symbols(self):
-        """E2E: Ensure product names and descriptions do not contain invalid symbols like 'text.text()'"""
+    def assert_product_names_have_no_invalid_symbols(self):
+        """E2E: Ensure product names do not contain invalid symbols like 'text.text()'"""
         names = self.page.eval_on_selector_all('.inventory_item_name', 'nodes => nodes.map(n => n.textContent)')
-        descriptions = self.page.eval_on_selector_all('.inventory_item_desc', 'nodes => nodes.map(n => n.textContent)')
-
+        
         # Define a regex for allowed characters (alphanumeric, space, basic punctuation)
         allowed_pattern = re.compile(r"\.[a-zA-Z()]+")
         
         for name in names:
             assert allowed_pattern.match(name.strip()), f"Invalid symbol found in product name: {name!r}"
         
+
+    def assert_product_descriptions_have_no_invalid_symbols(self):
+        """E2E: Ensure product descriptions do not contain invalid symbols like 'text.text()'"""
+        descriptions = self.page.eval_on_selector_all('.inventory_item_desc', 'nodes => nodes.map(n => n.textContent)')
+
+        # Define a regex for allowed characters (alphanumeric, space, basic punctuation)
+        allowed_pattern = re.compile(r"\.[a-zA-Z()]+")
+        
         for description in descriptions:
             assert allowed_pattern.match(description.strip()), f"Invalid symbol found in product description: {description!r}"
-
+    
     def expect_title_contains_text(self, text: str):
         """Assert that the page title contains the specified text."""
         self.page.wait_for_selector('.title', timeout=self.default_timeout)
         title = self.page.locator('.title').text_content()
         assert text in title, f"Expected title to contain '{text}', but got '{title}'"
+
+    def click_facebook_button(self):
+        """Click the Facebook button in the footer, verify the new tab URL, and close it."""
+        with self.page.expect_popup() as popup_info:
+            self.page.wait_for_selector('a[data-test="social-facebook"]', timeout=self.default_timeout)
+            self.page.click('a[data-test="social-facebook"]')
+    
+        facebook_page = popup_info.value
+        facebook_page.wait_for_load_state('load', timeout=self.default_navigation_timeout)
+
+        assert 'facebook.com' in facebook_page.url, f"Expected Facebook URL, got: {facebook_page.url}"
+
+        facebook_page.close()
+
+    def click_linkedin_button(self):
+        """Click the LinkedIn button in the footer."""
+        with self.page.expect_popup() as popup_info:
+            self.page.wait_for_selector('a[data-test="social-linkedin"]', timeout=self.default_timeout)
+            self.page.click('a[data-test="social-linkedin"]')
+        linkedin_page = popup_info.value
+        linkedin_page.wait_for_load_state('load', timeout=self.default_navigation_timeout)
+        assert 'linkedin.com' in linkedin_page.url, f"Expected LinkedIn URL, got: {linkedin_page.url}"
+        linkedin_page.close()
+
+    def click_x_button(self):
+        """Click the X button in the footer."""
+
+        with self.page.expect_popup() as popup_info:
+            self.page.wait_for_selector('a[data-test="social-twitter"]', timeout=self.default_timeout)
+            self.page.click('a[data-test="social-twitter"]')
+        twitter_page = popup_info.value
+        twitter_page.wait_for_load_state('load', timeout=self.default_navigation_timeout)
+        assert 'x.com' in twitter_page.url, f"Expected Twitter URL, got: {twitter_page.url}"
+        twitter_page.close()

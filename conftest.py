@@ -25,8 +25,15 @@ def browser_resources():
     }
     playwright = sync_playwright().start()
     browser = playwright.chromium.launch(**launch_options)
-    context_options = {'base_url': base_url}
-    browser_context = browser.new_context(**context_options, no_viewport=True)
+    resolution = configuration.get("Resolution", {"width": 1920, "height": 1080})
+    context_options = {
+    'base_url': base_url,
+    'viewport': {
+        'width': int(resolution.get("width", 1920)),
+        'height': int(resolution.get("height", 1080))
+        }
+    }
+    browser_context = browser.new_context(**context_options)
     browser_context.set_default_navigation_timeout(float(configuration["DefaultNavigationTimeout"]))
     browser_context.set_default_timeout(float(configuration["DefaultTimeout"]))
     page = browser_context.new_page()
