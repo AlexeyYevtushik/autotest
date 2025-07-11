@@ -22,4 +22,4 @@ class CartPage:
         assert 'inventory.html' in self.page.url
 
     def assert_cart_is_empty(self):
-        assert self.is_cart_empty(), "Cart is not empty, items are still present."
+        assert self.is_cart_empty(), "Actual result: Cart is not empty, items are still present.\nExpected result: Cart should be empty."

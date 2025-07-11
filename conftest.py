@@ -1,9 +1,11 @@
 import pytest
 import base64
-
 from utils.read_config import AppConfiguration
 from playwright.sync_api import sync_playwright
 from pages.menu_page import MenuPage
+import os
+import re
+from datetime import datetime
 
 @pytest.fixture(scope="session",autouse=True)
 def browser_resources():
@@ -69,35 +71,60 @@ def browser_page(browser_resources):
         # This fixture is used to ensure the page is always initialized before tests run
 
 
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
     """
     Extends the PyTest Plugin to take and embed screenshot in html report, whenever test fails.
-    :param item:
+    Additionally extracts filtered comments from the traceback and attaches them as a separate .txt file.
     """
-    import base64
     pytest_html = item.config.pluginmanager.getplugin('html')
     outcome = yield
     report = outcome.get_result()
     extra = getattr(report, 'extra', [])
 
-    # Only take screenshot for failures or xfail
     if report.when in ('call', 'setup') and (report.failed or hasattr(report, 'wasxfail')):
+
+        #Screenshot
         page = getattr(getattr(item, 'instance', None), 'page', None)
-        # Fallback for function-based tests
         if page is None:
             try:
                 page = item.funcargs.get('browser_page', None)
             except Exception:
                 page = None
-        if page is not None and pytest_html is not None:
+        if page and pytest_html:
             try:
                 screenshot_bytes = page.screenshot(full_page=True)
-                img_html = pytest_html.extras.image(base64.b64encode(screenshot_bytes).decode('utf-8'), mime_type='image/png')
+                img_html = pytest_html.extras.image(
+                    base64.b64encode(screenshot_bytes).decode('utf-8'),
+                    mime_type='image/png'
+                )
                 extra.append(img_html)
             except Exception as e:
-                extra.append(pytest_html.extras.text(f"Screenshot failed: {e}"))
+                extra.append(pytest_html.extras.text(f"Screenshot failed: {e}", name="Screenshot Error"))
+
+        #Extract and save Bug report
+        longrepr_text = getattr(report, 'longreprtext', None)
+        if longrepr_text and pytest_html:
+            pattern = r"#\s([a-zA-Z\s]*)(\n)"
+            results_pattern = r"(E\s.*)([AE].*)"
+            matches = re.findall(pattern, longrepr_text)
+            results_matches = re.findall(results_pattern, longrepr_text)
+            filtered_lines = [match[0].strip() for match in matches if match[0].strip()]
+            filtered_results = [match[1].strip() for match in results_matches if match[1].strip()]
+            
+            if filtered_lines:
+
+                filtered_text = "Steps to reproduce:\n" + "\n".join(f"\t{idx + 1}. {step}" for idx, step in enumerate(filtered_lines)) + "\n" + "\n".join(filtered_results)
+            try:
+                #Attach link to report
+                extra.append(pytest_html.extras.text(filtered_text, name="Bug report"))
+            except Exception as e:
+                extra.append(pytest_html.extras.text(f"Failed to save filtered comments: {e}", name="File Error"))
+
     report.extra = extra
+
+
 
 
 @pytest.fixture

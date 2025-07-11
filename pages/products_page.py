@@ -32,23 +32,23 @@ class ProductsPage:
 
     def assert_first_item(self, name):
         first_item = self.page.locator('.inventory_item').first
-        assert name in first_item.inner_text()
+        assert name in first_item.inner_text(), "Actual result: First item name does not match\nExpected result: First item name should match"
 
     def assert_number_on_badge(self, expected_count: int):
         badge = self.page.locator('.shopping_cart_badge')
         if expected_count > 0:
-            assert badge.is_visible(), "Cart badge should be visible"
-            assert badge.inner_text() == str(expected_count), f"Expected {expected_count} items in cart, found {badge.inner_text()}"
+            assert badge.is_visible(), "Actual result: Cart badge should be visible\nExpected result: Cart badge should be visible"
+            assert badge.inner_text() == str(expected_count), f"Actual result: Expected {expected_count} items in cart, found {badge.inner_text()}\nExpected result: {expected_count} items in cart"
         else:
-            assert not badge.is_visible(), "Cart badge should not be visible when cart is empty"
-
+            assert not badge.is_visible(), "Actual result: Cart badge should not be visible when cart is empty\nExpected result: Cart badge should not be visible when cart is empty"
+    
     def check_images_unique(self):
         """Check that every product image on the inventory page is unique"""
         image_srcs = self.page.eval_on_selector_all(
             '.inventory_item_img img',
             'nodes => nodes.map(n => n.src)'
         )
-        assert len(image_srcs) == len(set(image_srcs)), "Not all product images are unique!"
+        assert len(image_srcs) == len(set(image_srcs)), "Actual result: Not all product images are unique!\nExpected result: All product images should be unique"
 
     def assert_product_names_have_no_invalid_symbols(self):
         """E2E: Ensure product names do not contain invalid symbols like 'text.text()'"""
@@ -58,8 +58,7 @@ class ProductsPage:
         allowed_pattern = re.compile(r"\.[a-zA-Z()]+")
         
         for name in names:
-            assert allowed_pattern.match(name.strip()), f"Invalid symbol found in product name: {name!r}"
-        
+            assert allowed_pattern.match(name.strip()), f"Actual result: Invalid symbol found in product name: {name!r}\nExpected result: Valid product name"
 
     def assert_product_descriptions_have_no_invalid_symbols(self):
         """E2E: Ensure product descriptions do not contain invalid symbols like 'text.text()'"""
@@ -69,8 +68,8 @@ class ProductsPage:
         allowed_pattern = re.compile(r"\.[a-zA-Z()]+")
         
         for description in descriptions:
-            assert allowed_pattern.match(description.strip()), f"Invalid symbol found in product description: {description!r}"
-    
+            assert allowed_pattern.match(description.strip()), f"Actual result: Invalid symbol found in product description: {description!r}\nExpected result: Valid product description"
+
     def expect_title_contains_text(self, text: str):
         """Assert that the page title contains the specified text."""
         self.page.wait_for_selector('.title', timeout=self.default_timeout)
@@ -86,7 +85,7 @@ class ProductsPage:
         facebook_page = popup_info.value
         facebook_page.wait_for_load_state('load', timeout=self.default_navigation_timeout)
 
-        assert 'facebook.com' in facebook_page.url, f"Expected Facebook URL, got: {facebook_page.url}"
+        assert 'facebook.com' in facebook_page.url, f"Actual result: Expected Facebook URL, got: {facebook_page.url}\nExpected result: Facebook URL"
 
         facebook_page.close()
 
@@ -97,7 +96,7 @@ class ProductsPage:
             self.page.click('a[data-test="social-linkedin"]')
         linkedin_page = popup_info.value
         linkedin_page.wait_for_load_state('load', timeout=self.default_navigation_timeout)
-        assert 'linkedin.com' in linkedin_page.url, f"Expected LinkedIn URL, got: {linkedin_page.url}"
+        assert 'linkedin.com' in linkedin_page.url, f"Actual result: Expected LinkedIn URL, got: {linkedin_page.url}\nExpected result: LinkedIn URL"
         linkedin_page.close()
 
     def click_x_button(self):
@@ -108,5 +107,5 @@ class ProductsPage:
             self.page.click('a[data-test="social-twitter"]')
         twitter_page = popup_info.value
         twitter_page.wait_for_load_state('load', timeout=self.default_navigation_timeout)
-        assert 'x.com' in twitter_page.url, f"Expected Twitter URL, got: {twitter_page.url}"
+        assert 'x.com' in twitter_page.url, f"Actual result: Expected Twitter URL, got: {twitter_page.url}\nExpected result: Twitter URL"
         twitter_page.close()

@@ -38,7 +38,7 @@ RUN mkdir -p /app/reports && chmod -R 777 /app/reports
 RUN mkdir -p /app/tests/expected_screenshots && chmod -R 777 /app/tests/expected_screenshots
 
 # Default command to smoke and full_run tests (can be overridden)
-CMD ["pytest","-m smoke or full_run", "--html=reports/report.html", "--self-contained-html"]
+#CMD ["pytest","-m smoke or full_run", "--html=reports/report.html", "--self-contained-html"]
 
 # Uncomment the following line to run only smoke tests
-#CMD ["pytest","-m smoke", "--html=reports/report.html", "--self-contained-html"]
+CMD ["pytest","-m smoke", "--html=reports/report.html", "--self-contained-html"]

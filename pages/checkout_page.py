@@ -28,12 +28,12 @@ class CheckoutPage:
 
     def assert_error_is_visible(self):
         error_locator = self.page.locator('*[data-test="error"]')
-        assert error_locator.is_visible(), "Error message is not visible"
-        return error_locator.inner_text()
+        assert error_locator.is_visible(), "Actual result: Error message is not visible\nExpected result: Error message should be visible"
+        return error_locator.inner_text(), "Actual result: Error message text does not match expected\nExpected result: Error message should be visible"
     
     def expect_confirmation_to_have_text(self, text: str):
         """Assert that the confirmation message contains the specified text."""
         confirmation_locator = self.get_confirmation()
-        assert confirmation_locator.is_visible(), "Confirmation message is not visible"
+        assert confirmation_locator.is_visible(), "Actual result: Confirmation message is not visible\nExpected result: Confirmation message should be visible"
         confirmation_text = confirmation_locator.inner_text()
-        assert text in confirmation_text, f"Expected confirmation to contain '{text}', but got '{confirmation_text}'"
+        assert text in confirmation_text, f"Actual result: Expected confirmation to contain '{text}', but got '{confirmation_text}'\nExpected result: Confirmation message should match"
