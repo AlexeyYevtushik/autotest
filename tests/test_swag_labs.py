@@ -285,7 +285,7 @@ def test_capture_expected_screenshots(goto_page):
     """
     Capture and save screenshots for each main page object to tests/expected_screenshots.
     """
-    screenshots_dir = Path('tests/expected_screenshots')
+    screenshots_dir = Path('tests/tmp')
     screenshots_dir.mkdir(parents=True, exist_ok=True)
 
     # Login Page

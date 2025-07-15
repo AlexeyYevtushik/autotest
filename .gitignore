@@ -11,6 +11,7 @@ build/
 reports/
 
 # Ignore test screenshots directories
+tests/tmp/
 tests/expected_screenshots/
 
 # Ignore virtual environment
