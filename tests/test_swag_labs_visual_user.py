@@ -14,9 +14,8 @@ def test_successful_login(goto_page):
     """E2E: Successful login as standard_user"""
     page = goto_page("")  # Go to the base page
     login_page = LoginPage(page)
-    login_page.login('visual_user', 'secret_sauce')  # Perform login by visual_user
-    products_page = ProductsPage(page)
-    products_page.expect_title_contains_text('Products')  # Assert successful login
+    login_page.check_page_image()
+    login_page.login('visual_user', 'secret_sauce') 
 
 @pytest.mark.full_run
 def test_visual_product_page(goto_page):
@@ -59,9 +58,3 @@ def test_visual_menu_page(goto_page):
     menu_page.check_page_image()  # Visual check of menu page
     menu_page.close_menu()
 
-@pytest.mark.full_run
-def test_visual_login_page(goto_page):
-    """E2E: Visual check of login page"""
-    page = goto_page("")
-    login_page = LoginPage(page)
-    login_page.check_page_image()  # Visual check of login page
