@@ -117,7 +117,6 @@ def pytest_runtest_makereport(item):
             filtered_name = [match[1].strip() for match in name_matches if match[1].strip()]
             
             if filtered_lines:
-
                 filtered_text = "\n".join(filtered_name) + "\n\nSteps to reproduce:\n" + "\n".join(f"\t{idx + 1}. {step}" for idx, step in enumerate(filtered_lines)) + "\n" + "\n".join(filtered_results)
             try:
                 #Attach link to report
