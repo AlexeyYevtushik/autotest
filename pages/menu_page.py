@@ -1,7 +1,6 @@
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page
 from utils.read_config import AppConfiguration
-from PIL import Image, ImageChops
-import os
+from pages.base_page import BasePage
 
 class MenuPage:
     def __init__(self, page: Page):
@@ -42,31 +41,6 @@ class MenuPage:
         self.page.wait_for_load_state('domcontentloaded', timeout=self.default_navigation_timeout)
         assert 'https://saucelabs.com/' in self.page.url, "Actual result: Clicking 'About' did not navigate to Sauce Labs website\nExpected result: Sauce Labs website should be opened"
 
-    def check_page_image(self, threshold: int = 10) -> bool:
-        # Save current screenshot
-        current_path = f"tests/tmp/current_main_menu_page.png"
-
-        os.makedirs(os.path.dirname(current_path), exist_ok=True)
-        self.page.screenshot(path=current_path, full_page=True)
-
-        # Path to expected image
-        expected_path = f"tests/tmp/menu_page_expected.png"
-
-        # Load images
-        img1 = Image.open(expected_path).convert("RGB")
-        img2 = Image.open(current_path).convert("RGB")
-
-        # Find the difference
-        diff = ImageChops.difference(img1, img2)
-
-        # If there are no differences, diff.getbbox() will be None
-        if diff.getbbox() is None:
-            assert False, "Actual result: No differences found, but expected some.\nExpected result: Differences should be present in the menu page image."
-
-        # Analysis: can be extended
-        diff_hist = diff.histogram()
-        diff_score = sum(diff_hist)
-
-        assert diff_score < threshold, f"Actual result: {diff_score}\nExpected result: < {threshold}"
-
-        
+    def check_page_image(self, page_name: str = "menu", threshold: int = 10) -> bool:
+        base_page = BasePage(self.page)
+        base_page.check_page_image(f"tests/tmp/current_{page_name}_page.png", f"tests/tmp/{page_name}_page_expected.png", threshold)

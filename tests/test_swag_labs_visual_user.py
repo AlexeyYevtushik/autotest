@@ -63,8 +63,5 @@ def test_visual_menu_page(goto_page):
 def test_visual_login_page(goto_page):
     """E2E: Visual check of login page"""
     page = goto_page("")
-    menu_page = MenuPage(page)
-    menu_page.open_menu()
-    menu_page.logout()  # Logout to ensure we are on the login page
     login_page = LoginPage(page)
     login_page.check_page_image()  # Visual check of login page
