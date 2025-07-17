@@ -120,10 +120,10 @@ def pytest_runtest_makereport(item):
                 filtered_text = "\n".join(filtered_name) + "\n\nSteps to reproduce:\n" + "\n".join(f"\t{idx + 1}. {step}" for idx, step in enumerate(filtered_lines)) + "\n" + "\n".join(filtered_results)
             try:
                 #Attach link to report
-                extra.append(pytest_html.extras.text(filtered_text, name="Bug report"))
+                extra.append(pytest_html.extras.text(report.longreprtext, name="automation report"))
+                report.longrepr = filtered_text
             except Exception as e:
                 extra.append(pytest_html.extras.text(f"Failed to save filtered comments: {e}", name="File Error"))
-
     report.extra = extra
 
 
