@@ -50,7 +50,7 @@ class ProductsPage:
             '.inventory_item_img img',
             'nodes => nodes.map(n => n.src)'
         )
-        assert len(image_srcs) == len(set(image_srcs)), "Actual result: Not all product images are unique!\nExpected result: All product images should be unique"
+        assert len(image_srcs) == len(set(image_srcs)), "Actual result: Not all product images are unique\nExpected result: All product images should be unique"
 
     def assert_product_names_have_no_invalid_symbols(self):
         """E2E: Ensure product names do not contain invalid symbols like 'text.text()'"""
