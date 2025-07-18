@@ -33,7 +33,6 @@ class CheckoutPage:
         return error_locator.inner_text(), "Actual result: Error message text does not match expected\nExpected result: Error message should be visible"
     
     def expect_confirmation_to_have_text(self, text: str):
-        """Assert that the confirmation message contains the specified text."""
         confirmation_locator = self.get_confirmation()
         assert confirmation_locator.is_visible(), "Actual result: Confirmation message is not visible\nExpected result: Confirmation message should be visible"
         confirmation_text = confirmation_locator.inner_text()
