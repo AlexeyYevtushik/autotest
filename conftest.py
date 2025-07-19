@@ -108,14 +108,10 @@ def pytest_runtest_makereport(item):
         if longrepr_text and pytest_html:
             name_pattern = r"\"\"\"(.*)\"\"\""
             steps_pattern = r"#\s([a-zA-Z\s]*\n)"
-            results_pattern = r"\s(?:Actual result|Expected result|ERROR):[^\n]*"
+            results_pattern = r"\s(?:Actual result|Expected result):[^\n]*"
             steps_matches = re.findall(steps_pattern, longrepr_text)
             results_matches = re.findall(results_pattern, longrepr_text)
             name_matches = re.findall(name_pattern, longrepr_text)
-            # filtered_lines = [match[0].strip() for match in steps_matches if match[0].strip()]
-            # filtered_results = [match[0].strip() for match in results_matches if match[0].strip()]
-            # filtered_name = [match[1].strip() for match in name_matches if match[1].strip()]
-
             if name_matches and steps_matches and results_matches:
                 filtered_text = "\n".join(name_matches) + "\n\nSteps to reproduce:\n" + "".join(f"\t{idx + 1}. {step}" for idx, step in enumerate(steps_matches)) + "\n".join(results_matches)
             try:
