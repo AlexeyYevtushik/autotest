@@ -24,10 +24,8 @@ class MenuPage:
         self.page.click('a[id="logout_sidebar_link"]', timeout=self.default_timeout)
 
     def click_reset_app_state(self):
-        self.page.wait_for_selector('//a[@data-test="reset-sidebar-link"]', timeout=self.default_timeout)
-        
+        self.page.wait_for_timeout(2000)  # Wait for the menu to open
         locator = self.page.locator('//a[@data-test="reset-sidebar-link"]')
-        
         locator.click(timeout=self.default_timeout, force=True)
 
 
