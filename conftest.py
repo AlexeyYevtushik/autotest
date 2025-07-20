@@ -111,9 +111,9 @@ def pytest_runtest_makereport(item):
             results_pattern = r"\s(?:Actual result|Expected result):[^\n]*"
             steps_matches = re.findall(steps_pattern, longrepr_text)
             results_matches = re.findall(results_pattern, longrepr_text)
-            name_matches = re.findall(name_pattern, longrepr_text)
+            name_matches = (re.findall(name_pattern, longrepr_text))[0]
             if name_matches and steps_matches and results_matches:
-                filtered_text = "\n".join(name_matches) + "\n\nSteps to reproduce:\n" + "".join(f"\t{idx + 1}. {step}" for idx, step in enumerate(steps_matches)) + "\n".join(results_matches)
+                filtered_text = "".join(name_matches) + "\n\nSteps to reproduce:\n" + "".join(f"\t{idx + 1}. {step}" for idx, step in enumerate(steps_matches)) + "\n".join(results_matches)
             try:
                 #Attach link to report
                 extra.append(pytest_html.extras.text(report.longreprtext, name="automation report"))
