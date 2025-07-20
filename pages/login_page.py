@@ -9,7 +9,7 @@ class LoginPage:
         self.default_navigation_timeout = int(config["DefaultNavigationTimeout"])
         self.default_timeout = int(config["DefaultTimeout"])
 
-    def login(self, username: str, password: str):
+    def login(self, username="standard_user", password="secret_sauce"):
         self.page.fill('input[data-test="username"]', username, timeout=self.default_timeout)
         self.page.fill('input[data-test="password"]', password, timeout=self.default_timeout)
         self.page.click('input[data-test="login-button"]', timeout=self.default_timeout)

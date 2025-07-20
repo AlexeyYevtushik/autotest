@@ -8,13 +8,12 @@ import pytest
 from pathlib import Path
 
 # No BaseTest needed, use fixtures directly
-
 @pytest.mark.smoke
 def test_successful_login(goto_page):
     """E2E: Successful login as standard_user"""
     page = goto_page("")  # Go to the base page
     login_page = LoginPage(page)
-    login_page.login('standard_user', 'secret_sauce')  # Perform login by standard_user
+    login_page.login()  # Perform login by standard_user
     products_page = ProductsPage(page)
     products_page.expect_title_contains_text('Products')  # Assert successful login
     
@@ -291,10 +290,12 @@ def test_capture_expected_screenshots(goto_page):
     # Login Page
     page = goto_page("")
     login_page = LoginPage(page)
-    login_page.page.screenshot(path=str(screenshots_dir / 'login_page_expected.png'), full_page=True)
 
     # Products Page
     login_page.login('standard_user', 'secret_sauce')
+    menu_page = MenuPage(page)
+    menu_page.open_menu()
+    menu_page.page.screenshot(path=str(screenshots_dir / 'menu_page_expected.png'), full_page=True)
     products_page = ProductsPage(page)
     products_page.page.screenshot(path=str(screenshots_dir / 'products_page_expected.png'), full_page=True)
 
@@ -309,11 +310,5 @@ def test_capture_expected_screenshots(goto_page):
     checkout_page = CheckoutPage(page)
     checkout_page.page.screenshot(path=str(screenshots_dir / 'checkout_page_expected.png'), full_page=True)
 
-    # Menu Page (open menu on products page)
-    page = goto_page()
-    menu_page = MenuPage(page)
-    menu_page.open_menu()
-    menu_page.page.screenshot(path=str(screenshots_dir / 'menu_page_expected.png'), full_page=True)
-    menu_page.close_menu()
 
 

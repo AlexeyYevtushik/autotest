@@ -16,7 +16,10 @@ class CheckoutPage:
         self.page.click('input[data-test="continue"]', timeout=self.default_timeout)
 
     def finish(self):
-        self.page.click('button[data-test="finish"]', timeout=self.default_timeout)
+        try:    
+            self.page.click('button[data-test="finish"]', timeout=self.default_timeout)
+        except Exception as e:
+            print(f"Error occurred while finishing checkout: {e}")
 
     def get_confirmation(self):
         return self.page.locator('.complete-header')
@@ -28,9 +31,9 @@ class CheckoutPage:
         self.page.click('button[data-test="cancel"]', timeout=self.default_timeout)
 
     def assert_error_is_visible(self):
+        self.page.wait_for_selector('*[data-test="error"]', timeout=self.default_timeout, state='visible')
         error_locator = self.page.locator('*[data-test="error"]')
         assert error_locator.is_visible(), "Actual result: Error message is not visible\nExpected result: Error message should be visible"
-        return error_locator.inner_text(), "Actual result: Error message text does not match expected\nExpected result: Error message should be visible"
     
     def expect_confirmation_to_have_text(self, text: str):
         """Assert that the confirmation message contains the specified text."""

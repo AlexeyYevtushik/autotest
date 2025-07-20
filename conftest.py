@@ -146,10 +146,10 @@ def reset_cart_if_needed(goto_page):
     if badge.is_visible():
         # If badge is visible (cart not empty), open menu and reset app state
         menu_page = MenuPage(page)
-        menu_page.open_menu()
-        page.click('//a[@data-test="reset-sidebar-link"]')
-        # Optionally, wait for badge to disappear
-        page.wait_for_selector('.shopping_cart_badge', state='detached')
+        # menu = page.locator('//button[contains(text(),"Close Menu")]')
+        page.reload()
+        menu_page.open_menu()   
+        menu_page.click_reset_app_state()
         menu_page.close_menu()
         page.reload()
 
