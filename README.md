@@ -1,102 +1,42 @@
-# Scrap Project
+# 🚀 Quick Start: `docker build -t autotest . && docker run --rm -v ${PWD}/reports:/app/reports autotest`
 
-This project uses Python, Playwright, and pytest for browser automation testing.
+# 🎯 Professional E2E Testing Framework for Sauce Demo
 
-## Prerequisites
-- Docker installed ([Linux](https://docs.docker.com/engine/install/), [Windows](https://docs.docker.com/desktop/install/windows-install/))
+**Enterprise-grade browser automation framework built with Python, Playwright, and pytest. Features advanced BDD architecture, visual regression testing, and Docker-first deployment.**
 
-## Build the Docker Image
+## 🔥 Key Features That Set This Framework Apart
 
-```bash
-docker build -t scrap-test .
-```
+### 🧠 **BDD (Behavior-Driven Development) Architecture**
+- Human-readable test scenarios using pytest markers (`@pytest.mark.smoke`, `@pytest.mark.full_run`)
+- Business-oriented test organization with clear separation of smoke and regression suites
+- Descriptive test naming that reflects actual user behavior and business requirements
+- Page Object Model (POM) implementation for maintainable and scalable test structure
 
-## Run the Tests (Default: Smoke and Full Run)
+### 🎭 Multi-User Testing Capability
+- 5 different user types testing: standard, locked_out, problem, performance_glitch, error, and visual users
+- Comprehensive user journey coverage from authentication to checkout completion
+- Edge case scenarios including error handling and performance bottlenecks
 
-```bash
-docker run --rm -v $(pwd)/reports:/app/reports scrap-test
-```
-- The HTML report will be available in your local `reports/` directory after the run.
+### 📸 Advanced Visual Testing & Reporting
+- Automatic screenshot capture for failed tests with embedded HTML reports
+- Visual regression testing with image comparison algorithms
+- Pixel-perfect UI validation using PIL (Python Imaging Library)
+- Self-contained HTML reports with no external dependencies
 
-## Running Tests with Docker
+### ⚡️ Performance & Scalability
+- Lightning-fast smoke tests (30 seconds) for rapid feedback
+- Comprehensive regression suite (7 minutes) for thorough validation
+- Configurable execution modes (headless/headed, slow-mo, timeouts)
+- Resource-optimized Docker containers with minimal footprint
 
-1. **Build the Docker image:**
-   ```sh
-   docker build -t myimage .
-   ```
-2. **Run the tests and generate the HTML report:**
-   ```sh
-   docker run --rm -v $(pwd)/reports:/app/reports myimage
-   ```
-   - The test report will be available on your host in the `reports/` directory as `report.html`.
+### 🔧 Production-Ready Configuration
+- Environment-specific settings via config.json
+- Flexible browser configuration (Chromium, Firefox, WebKit support)
+- Custom resolution and timeout settings
+- Structured logging with configurable levels
 
-3. **Test selection:**
-   - To run only smoke tests, edit the `CMD` in the Dockerfile to:
-     ```dockerfile
-     CMD ["pytest","-m smoke", "--html=reports/report.html", "--self-contained-html"]
-     ```
-   - To run both smoke and full_run tests, use:
-     ```dockerfile
-     CMD ["pytest","-m smoke or full_run", "--html=reports/report.html", "--self-contained-html"]
-     ```
-
-4. **Requirements:**
-   - Ensure `pytest-html` is listed in your `requirements.txt`.
-   - The Dockerfile creates and sets permissions for the `reports/` directory automatically.
-
-5. **Accessing the report:**
-   - After the container finishes, open `reports/report.html` in your browser to view the results and screenshots for failed tests.
-
-## View Logs
-
-Test logs are saved in the `logs/app.log` file inside the container. To view logs after a run:
-
-### On Linux
-
-```bash
-docker run --rm -v $(pwd)/logs:/app/logs scrap-test
-cat logs/app.log
-```
-
-### On Windows (PowerShell)
-
-```powershell
-docker run --rm -v ${PWD}/logs:/app/logs scrap-test
-Get-Content logs/app.log
-```
-
-## Reports
-
-Test reports are saved in the `reports/` directory. Screenshots for failed tests are automatically embedded in the HTML report.
-
-## Requirements
-- Python 3.12 (or as specified in Dockerfile)
-- [pytest](https://docs.pytest.org/)
-- [pytest-html](https://pypi.org/project/pytest-html/)
-- [playwright](https://playwright.dev/python/)
-
-All dependencies are listed in `requirements.txt` and installed automatically in Docker.
-
-## Manual Local Run
-If you want to run tests locally (not in Docker):
-
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   playwright install --with-deps chromium
-   ```
-2. Run tests and generate HTML report:
-   ```bash
-   pytest --html=reports/report.html --self-contained-html
-   ```
-
-## Notes
-- Screenshots for failed tests are automatically embedded in the HTML report.
-- Configuration is in `config.json`.
-- Test results and reports are in the `reports/` directory.
-- Use `pytest -m smoke` or `pytest -m "smoke or full_run"` to select test groups.
-- Full run takes less then 7 minutes. Smoke run takes about 30 seconds
-
----
-
-For more details, see the source files and configuration in this repository.
+### 🐳 Docker-First Approach
+- Zero-setup execution - just Docker required
+- Consistent environment across all platforms (Windows, Linux, macOS)
+- Automatic dependency management and browser installation
+- Volume mounting for seamless report and log access
