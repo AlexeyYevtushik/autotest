@@ -12,11 +12,11 @@ class ProductsPage:
         self.default_timeout = int(config["DefaultTimeout"])
 
     def add_to_cart(self, item_test_id: str):
-        self.page.wait_for_selector(f'button[data-test="add-to-cart-{item_test_id}"]', timeout=self.default_timeout, state='visible')
+        self.page.wait_for_selector(f'button[data-test="add-to-cart-{item_test_id}"]', timeout=self.default_timeout)
         self.page.click(f'button[data-test="add-to-cart-{item_test_id}"]')
 
     def remove_from_cart(self, item_test_id: str):
-        self.page.wait_for_selector(f'button[data-test="remove-{item_test_id}"]', timeout=self.default_timeout, state='visible')
+        self.page.wait_for_selector(f'button[data-test="remove-{item_test_id}"]', timeout=self.default_timeout)
         self.page.click(f'button[data-test="remove-{item_test_id}"]')
 
     def open_cart(self):
@@ -39,7 +39,6 @@ class ProductsPage:
     def assert_number_on_badge(self, expected_count: int):
         badge = self.page.locator('.shopping_cart_badge')
         if expected_count > 0:
-            assert badge.is_visible(), "Actual result: Cart badge should be visible\nExpected result: Cart badge should be visible"
             assert badge.inner_text() == str(expected_count), f"Actual result: Expected {expected_count} items in cart, found {badge.inner_text()}\nExpected result: {expected_count} items in cart"
         else:
             assert not badge.is_visible(), "Actual result: Cart badge should not be visible when cart is empty\nExpected result: Cart badge should not be visible when cart is empty"

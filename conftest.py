@@ -106,18 +106,14 @@ def pytest_runtest_makereport(item):
         #Extract and save Bug report
         longrepr_text = getattr(report, 'longreprtext', None)
         if longrepr_text and pytest_html:
-            pattern_name = r"(\"\"\")(.*)(\"\"\")"
-            pattern = r"#\s([a-zA-Z\s]*)(\n)"
-            results_pattern = r"(E\s.*)([AE].*)"
-            matches = re.findall(pattern, longrepr_text)
+            name_pattern = r"\"\"\"(.*)\"\"\""
+            steps_pattern = r"#\s([a-zA-Z\s]*\n)"
+            results_pattern = r"\s(?:Actual result|Expected result):[^\n]*"
+            steps_matches = re.findall(steps_pattern, longrepr_text)
             results_matches = re.findall(results_pattern, longrepr_text)
-            name_matches = re.findall(pattern_name, longrepr_text)
-            filtered_lines = [match[0].strip() for match in matches if match[0].strip()]
-            filtered_results = [match[1].strip() for match in results_matches if match[1].strip()]
-            filtered_name = [match[1].strip() for match in name_matches if match[1].strip()]
-            
-            if filtered_lines:
-                filtered_text = "\n".join(filtered_name) + "\n\nSteps to reproduce:\n" + "\n".join(f"\t{idx + 1}. {step}" for idx, step in enumerate(filtered_lines)) + "\n" + "\n".join(filtered_results)
+            name_matches = re.findall(name_pattern, longrepr_text)
+            if name_matches and steps_matches and results_matches:
+                filtered_text = "\n".join(name_matches) + "\n\nSteps to reproduce:\n" + "".join(f"\t{idx + 1}. {step}" for idx, step in enumerate(steps_matches)) + "\n".join(results_matches)
             try:
                 #Attach link to report
                 extra.append(pytest_html.extras.text(report.longreprtext, name="automation report"))
@@ -150,10 +146,10 @@ def reset_cart_if_needed(goto_page):
     if badge.is_visible():
         # If badge is visible (cart not empty), open menu and reset app state
         menu_page = MenuPage(page)
-        menu_page.open_menu()
-        page.click('//a[@data-test="reset-sidebar-link"]')
-        # Optionally, wait for badge to disappear
-        page.wait_for_selector('.shopping_cart_badge', state='detached')
+        # menu = page.locator('//button[contains(text(),"Close Menu")]')
+        page.reload()
+        menu_page.open_menu()   
+        menu_page.click_reset_app_state()
         menu_page.close_menu()
         page.reload()
 

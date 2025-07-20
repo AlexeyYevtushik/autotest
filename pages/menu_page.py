@@ -10,13 +10,26 @@ class MenuPage:
         self.default_timeout = int(config["DefaultTimeout"])
 
     def open_menu(self):
+        self.page.wait_for_selector('button[id="react-burger-menu-btn"]', timeout=self.default_timeout)
         self.page.click('button[id="react-burger-menu-btn"]', timeout=self.default_timeout)
 
+
     def close_menu(self):
+        self.page.wait_for_selector('button[id="react-burger-cross-btn"]', timeout=self.default_timeout)
         self.page.click('button[id="react-burger-cross-btn"]', timeout=self.default_timeout)
+    
+
 
     def logout(self):
         self.page.click('a[id="logout_sidebar_link"]', timeout=self.default_timeout)
+
+    def click_reset_app_state(self):
+        self.page.wait_for_selector('//a[@data-test="reset-sidebar-link"]', timeout=self.default_timeout)
+        
+        locator = self.page.locator('//a[@data-test="reset-sidebar-link"]')
+        
+        locator.click(timeout=self.default_timeout, force=True)
+
 
     def click_reset_app_state_on_products_page(self):
         self.page.click('//a[@data-test="reset-sidebar-link"]', timeout=self.default_timeout)

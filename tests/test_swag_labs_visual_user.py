@@ -57,5 +57,5 @@ def test_visual_menu_page(goto_page):
     menu_page = MenuPage(page)
     menu_page.open_menu()  # Open the menu
     menu_page.check_page_image()  # Visual check of menu page
-    menu_page.close_menu()
+    
 
