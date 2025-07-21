@@ -3,6 +3,7 @@ import base64
 from utils.read_config import AppConfiguration
 from playwright.sync_api import sync_playwright
 from pages.menu_page import MenuPage
+from pages.login_page import LoginPage
 import os
 import re
 from datetime import datetime
@@ -111,8 +112,9 @@ def pytest_runtest_makereport(item):
             results_pattern = r"\s(?:Actual result|Expected result):[^\n]*"
             steps_matches = re.findall(steps_pattern, longrepr_text)
             results_matches = re.findall(results_pattern, longrepr_text)
-            name_matches = (re.findall(name_pattern, longrepr_text))[0]
+            name_matches = (re.findall(name_pattern, longrepr_text))
             if name_matches and steps_matches and results_matches:
+                name_matches = name_matches[0]
                 filtered_text = "".join(name_matches) + "\n\nSteps to reproduce:\n" + "".join(f"\t{idx + 1}. {step}" for idx, step in enumerate(steps_matches)) + "\n".join(results_matches)
             try:
                 #Attach link to report
@@ -168,3 +170,29 @@ def close_browser_error_dialog(browser_page):
         browser_page.off('dialog', handle_dialog)
     except Exception:
         pass
+
+@pytest.fixture(scope="module", autouse=True)
+def login_user(browser_page, username):
+    page = browser_page
+    login_page = LoginPage(page)
+    login_page.login(username)
+    yield page
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "user(users): specify which user(s) this test should run as")
+
+def pytest_generate_tests(metafunc):
+    if "username" in metafunc.fixturenames:
+        user_marker = metafunc.definition.get_closest_marker("user")
+
+        if user_marker is None and hasattr(metafunc.module, 'pytestmark'):
+            for mark in metafunc.module.pytestmark:
+                if mark.name == "user":
+                    user_marker = mark
+                    break
+
+        if user_marker:
+            users = user_marker.args[0]
+            metafunc.parametrize("username", users, scope="module") 
+        else:
+            metafunc.parametrize("username", ["standard_user"], scope="module")  

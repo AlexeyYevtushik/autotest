@@ -9,10 +9,14 @@ class LoginPage:
         self.default_navigation_timeout = int(config["DefaultNavigationTimeout"])
         self.default_timeout = int(config["DefaultTimeout"])
 
-    def login(self, username="standard_user", password="secret_sauce"):
-        self.page.fill('input[data-test="username"]', username, timeout=self.default_timeout)
-        self.page.fill('input[data-test="password"]', password, timeout=self.default_timeout)
-        self.page.click('input[data-test="login-button"]', timeout=self.default_timeout)
+    def login(self, username="standard_user", password="secret_sauce"):     
+        self.page.goto("/", timeout=self.default_navigation_timeout)
+        self.page.reload(timeout=self.default_navigation_timeout)
+        print(self.page.url)
+        self.page.wait_for_load_state('load', timeout=self.default_navigation_timeout)
+        self.page.locator('input[data-test="username"]').press_sequentially(username, timeout=self.default_timeout)
+        self.page.locator('input[data-test="password"]').press_sequentially(password, timeout=self.default_timeout)
+        self.page.locator('input[data-test="login-button"]').click(timeout=self.default_timeout)
 
     def get_error(self):
         return self.page.locator('[data-test="error"]')
