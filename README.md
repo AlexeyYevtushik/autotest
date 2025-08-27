@@ -3,9 +3,9 @@
 Enterprise‑grade end‑to‑end framework powered by Python + Playwright + pytest.
 All tests run inside Docker and in GitHub Actions with a single command.
 
-## Run Locally (<2 min)
+Run Locally (<2 min)
 
-# Build image & run tests, reports saved to ./reports
+### Build image & run tests, reports saved to ./reports
 ```markdown
 docker build -t autotest .
 docker run --rm -v ${PWD}/reports:/app/reports autotest
