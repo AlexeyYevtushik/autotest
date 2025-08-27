@@ -1,15 +1,16 @@
-Sauce Demo E2E – CI‑First Edition
+# Sauce Demo E2E – CI‑First Edition
 
 Enterprise‑grade end‑to‑end framework powered by Python + Playwright + pytest.
 All tests run inside Docker and in GitHub Actions with a single command.
 
-1. Run Locally (<2 min)
+## Run Locally (<2 min)
 
 # Build image & run tests, reports saved to ./reports
+```markdown
 docker build -t autotest .
 docker run --rm -v ${PWD}/reports:/app/reports autotest
-
-2. CI / CD (GitHub Actions)
+```
+## CI / CD (GitHub Actions)
 
 Workflow .github/workflows/ci.yml triggers on:
 
@@ -28,8 +29,8 @@ The job re‑uses the Docker image:
 
 If the container exits with code 0 the build passes; HTML and visual‑diff reports are uploaded as artifacts.
 
-3. Repo Map (excerpt)
-
+## Repo Map (excerpt)
+```markdown
 /
 ├── Dockerfile                  # autotest image
 ├── playwright.config.py        # global Playwright options
@@ -42,8 +43,8 @@ If the container exits with code 0 the build passes; HTML and visual‑diff repo
     │   └── checkout_test.py
     └── visual/
         └── visual_regression_test.py
-
-4. Highlights & Trade‑offs
+```
+## Highlights & Trade‑offs
 
 Multi‑user coverage – standard, locked‑out, problem, performance‑glitch, error and visual users.
 
